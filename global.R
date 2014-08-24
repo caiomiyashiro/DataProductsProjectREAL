@@ -1,1 +1,1 @@
-testFiles <- data.frame()
+testFiles <- list()
