@@ -818,8 +818,10 @@ hljs.initHighlightingOnLoad();
 <section data-transition="linear" data-transition-speed="default">
 <h3>Preprocessing and dataset creation</h3>
 <div class="slideContent" >
-<p>The dataset was obtained in this site: [<a href="http://theremin.music.uiowa.edu/%5D%5B1">http://theremin.music.uiowa.edu/][1</a>], were we got samples of two instruments: Trombone and violin. The same notes was downloaded (from A3 to C5).<br/>
-The techinique used to detect which other frequencies are presented in the sound/instrument signal in called fourier transform and the dataset are made of the fourier transformation of all the signals (<strong>The preprocessing script can be found here: <a href="https://www.dropbox.com/sh/ryjbyovy9uiwqpj/AAB_D9FL6_fbLZGrXfWCNAt9a?dl=0">https://www.dropbox.com/sh/ryjbyovy9uiwqpj/AAB_D9FL6_fbLZGrXfWCNAt9a?dl=0</a></strong>).</p>
+<p>The dataset was obtained in this site: <a href="http://theremin.music.uiowa.edu/">http://theremin.music.uiowa.edu/</a>, were we got samples of two instruments: Trombone and violin. The same notes was downloaded (from A3 to C5).  The aiff files were then converted online to .wax in: <a href="http://media.io/">http://media.io/</a>
+The technique used to detect which other frequencies are presented in the sound/instrument signal in called fourier transform and the dataset are made of the fourier transformation of all the signals (<strong>The preprocessing script can be found here: <a href="https://www.dropbox.com/sh/ryjbyovy9uiwqpj/AAB_D9FL6_fbLZGrXfWCNAt9a?dl=0">https://www.dropbox.com/sh/ryjbyovy9uiwqpj/AAB_D9FL6_fbLZGrXfWCNAt9a?dl=0</a></strong>).</p>
+
+<p>In the subsequent code, we read in the dataset, train a random forest classifier and evaluate the most important frequencies needed to correctly classify the 2 instruments:</p>
 
 </div>
 
@@ -827,7 +829,18 @@ The techinique used to detect which other frequencies are presented in the sound
 <section data-transition="linear" data-transition-speed="default">
 <h3>Evaluation</h3>
 <div class="slideContent" >
-<p>In the subsequent code, we read in the dataset, train a random forest classifier and evaluate the most important frequencies needed to correctly classify the 2 instruments:</p>
+<pre><code class="r">    library(caret)
+    library(randomForest)
+    freqs &lt;- repmis::source_data(
+        &quot;http://www.dropbox.com/s/hye8unga4d8n2nz/data.txt&quot;,sep = &quot; &quot;, header = T)
+    training &lt;- freqs[createDataPartition(freqs$class,p = 0.7,list = FALSE),]
+    rfmodel &lt;- randomForest(class ~ ., data=training, importance=TRUE)
+    varImportance &lt;- varImp(rfmodel)
+    row.names(varImportance[order(varImportance[,1],decreasing = T),][1:5,])
+</code></pre>
+
+<pre><code>[1] &quot;X288.855&quot; &quot;X284.445&quot; &quot;X251.37&quot;  &quot;X335.16&quot;  &quot;X337.365&quot;
+</code></pre>
 
 </div>
 
